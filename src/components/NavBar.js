@@ -11,14 +11,16 @@ class NavBar extends Component {
           <Toolbar className="nav-container" >
             <a
               className="col-sm-3 col-md-2 mr-0"
-              href="http://www.dappuniversity.com/bootcamp"
+              href="https://github.com/KashShahzad/Industan"
               target="_blank"
               rel="noopener noreferrer"
-              style={{color: "white", padding: "10px",
+              style={{color: "white",
               fontFamily: "Georgia",
-              fontSize: '25px',
-              wordSpacing: "6px",
-              textDecoration: "none"
+              fontSize: '30px',
+              letterSpacing: "3px",
+              textDecoration: "none",
+              marginRight: "50px",
+              marginLeft: "30px"
              }}
             >
               Industan
@@ -32,8 +34,8 @@ class NavBar extends Component {
                     alt="abc"
                     src={`data:image/png;base64, ${new Identicon(this.props.account, 30).toString()}`}
                   />: <span></span>}
-                  <small className="text-secondary"
-                     style={{padding: "10px"}}
+                  <small
+                     style={{padding: "10px", fontSize:"20px"}}
                   >
                     <small id="account">{this.props.account}</small>
                   </small>

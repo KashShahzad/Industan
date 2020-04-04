@@ -43,7 +43,7 @@
   },
   "description": "A BlockChain based social network where a user is rewarded by other users or concerned authorities fo identifying and solving problems",
   "main": "index.js",
-  "repository": "https://github.com/KashShahzad/alpha-citizen",
+  "repository": "https://github.com/KashShahzad/Industan",
   "author": "Kashif Shahzad",
   "license": "MIT"
 }

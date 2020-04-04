@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import Web3 from 'web3'
 import NavBar from './components/NavBar'
+import SocialNetwork from './c_build/SocialNetwork.json'
+import CardUI from "./components/Card"
 import './App.css';
 
 class App extends Component {
@@ -29,21 +31,74 @@ class App extends Component {
     const accounts = await web3.eth.getAccounts()
     console.log(accounts)
     this.setState({ account: accounts[0] })
+    //Network ID
+    const networkId = await web3.eth.net.getId()
+    const networkData = SocialNetwork.networks[networkId]
+    if(networkData) {
+      const socialNetwork = new web3.eth.Contract(SocialNetwork.abi, networkData.address)
+      this.setState({ socialNetwork })
+      const postCount = await socialNetwork.methods.postCount().call()
+      this.setState({ postCount })
+      // Load Posts
+      for (var i = 1; i <= postCount; i++) {
+        const post = await socialNetwork.methods.posts(i).call()
+        this.setState({
+          posts: [...this.state.posts, post]
+        })
+      }
+      // Sort posts. Show highest tipped posts first
+      this.setState({
+        posts: this.state.posts.sort((a,b) => b.tipAmount - a.tipAmount )
+      })
+      this.setState({ loading: false})
+    } else {
+      window.alert('SocialNetwork contract not deployed to detected network.')
+    }
+    //Address
+    //ABI
+  }
+
+  createPost(content) {
+    this.setState({ loading: true })
+    this.state.socialNetwork.methods.createPost(content).send({ from: this.state.account })
+    .once('receipt', (receipt) => {
+      this.setState({ loading: false })
+    })
+  }
+
+  tipPost(id, tipAmount) {
+    this.setState({ loading: true })
+    this.state.socialNetwork.methods.tipPost(id).send({ from: this.state.account, value: tipAmount })
+    .once('receipt', (receipt) => {
+      this.setState({ loading: false })
+    })
   }
 
   constructor(props){
     super(props)
     this.state = {
-      account: ''
+      account: '',
+      socialNetwork: null,
+      postCount: 0,
+      posts: [],
+      loading: true
     }
+    this.createPost = this.createPost.bind(this)
+    this.tipPost = this.tipPost.bind(this)
   }
 
   render(){
     return (
-      <div className="App">
+      <div>
         <NavBar account = {this.state.account}/>
-        <div></div>
-      </div>
+        { this.state.loading
+          ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
+          : <CardUI
+              posts={this.state.posts}
+              createPost={this.createPost}
+              tipPost={this.tipPost}
+            />
+        }      </div>
     );
   }
   

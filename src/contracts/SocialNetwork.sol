@@ -2,11 +2,10 @@ pragma solidity >=0.4.21 <0.7.0;
 
 contract SocialNetwork {
     string public name;
-
     uint public postCount = 0;
 
     //for storing on BC
-    mapping(uint => Post)public posts;
+    mapping(uint => Post) public posts;
 
     struct Post {
         uint id;
@@ -49,15 +48,15 @@ contract SocialNetwork {
         require(_id > 0 && _id <= postCount, "Please fill content");
         //fetch the post
         Post memory _post = posts[_id];
-        //fetch the auther
-        address payable _auther = _post.author;
-        //pay the auther with the use of transfer method
-        address(_auther).transfer(msg.value);
+        // Fetch the author
+        address payable _author = _post.author;
+        // Pay the author by sending them Ether
+        address(_author).transfer(msg.value);
         //increment the tip amount
         _post.tipAmount = _post.tipAmount + msg.value;
         //update the post
         posts[_id] = _post;
         //trigger an event
-        emit PostTipped(postCount, _post.content, _post.tipAmount, _auther);
+        emit PostTipped(postCount, _post.content, _post.tipAmount, _author);
     }
 }
